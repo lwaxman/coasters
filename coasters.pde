@@ -14,6 +14,7 @@ ArrayList<Province> provinces;
 
 void setup() {
   size(800, 800);
+  noLoop();
 }
 
 void draw() {
@@ -55,24 +56,22 @@ ArrayList<Province> loadData() {
   for (TableRow row : alcConsumption.rows ()) {
     
     String name = row.getString("GEO").trim();
-    Province newProvince;
+    String year = row.getString("Ref_Date").trim();
     
-    println("row #"+rowCount+"	name:" + name);
-    // year = row.getString("Ref_Date").trim();
-
-    // println("last name: " + prevName);
-
-    if (name!=prevName) {
-      newProvince = new Province();
-      prevName = name;
-      println("////////// NEW PROVINCE");
+    Province newProvince = new Province();
+    
+    if (!name.equals(prevName)) {
+      println("////////////////////////////// NEW PROVINCE  :" + name);
+      prevName = name;  
+      
+      newProvince.name = name;
+      newProvince.colour = color(random(200), random(200), random(255));
+      provinces.put("key", newProvince);
+      
     }
-
-    newProvince.name = name;
-    newProvince.colour = color(random(200), random(200), random(255));
-    provinces.put("key", newProvince);
-
-
+    
+//    newProvince.name = name;
+    
     rowCount++;
   }
 
