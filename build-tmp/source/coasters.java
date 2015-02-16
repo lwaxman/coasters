@@ -318,8 +318,8 @@ public ArrayList<Province> loadData() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////// SETUP ////////
 PImage thisImage;
 int totalWidth = 250;
-int totalHeight = 300;
-int baseHeight = 10;
+int totalHeight = 150;
+int baseHeight = 30;
 int resolution = 100;
 float elevationScale = (float)(totalHeight-baseHeight)/255;
 WETriangleMesh mesh;
@@ -339,34 +339,43 @@ public void setup() {
 	// endRecord();
 
 	for(Province prov : provinces){
-		if(prov.returnNom() != null && prov.returnNom().contains("Quebec")){
-			println("found Quebec");
+		if(prov.returnNom() != null && prov.returnNom().contains("Northwest")){
+			println("found NW");
 			buildGraph(prov, 0, 0);
 			background(0);
 		}
 	}
 	// render3D(thisImage);
-
+	
 	thisImage.resize(resolution, resolution);
 
 	Terrain terrain = new Terrain(resolution, resolution, 20);
-	float[] el = new float[resolution*resolution];
+	float[] el = new float[(resolution)*(resolution)];
 	for (int i=0; i<thisImage.pixels.length; i++) {
 		// we use the brightness of each pixel
 		// as a metric for elevation
 		// (however damped down to avoid crazy spikes)
 		el[i] = brightness(thisImage.pixels[i])*elevationScale;
 	}
-	terrain.setElevation(el);
-	mesh = new WETriangleMesh();
-	terrain.toMesh(mesh,-10);
-	new LaplacianSmooth().filter(mesh,1);
 
-	String fileName="quebec.stl";
+	String fileName="northwestTerritories.stl";
+
+	//x = 101, y=101.18. 
+
 	// save mesh in STL format in sketch folder
+	// gfx.mesh(mesh);
+	pushMatrix();
+	scale(0.3f, 0.3f, 0.3f);
+	rotate(0,0,90,90);
+	
+		terrain.setElevation(el);
+		mesh = new WETriangleMesh();
+		terrain.toMesh(mesh,-baseHeight);
+		new LaplacianSmooth().filter(mesh,1);
+		mesh.saveAsSTL(sketchPath(fileName));
+		gfx = new ToxiclibsSupport(this);
 
-	mesh.saveAsSTL(sketchPath(fileName));
-	gfx = new ToxiclibsSupport(this);
+	popMatrix();
 
 }
 
@@ -380,62 +389,12 @@ public void draw() { //drawEach()
 	// turn off wireframe/outline
 	noStroke();
 	// draw the mesh
+	// pushMatrix();
+	// scale(0.3, 0.3, 0.3);
+	// rotate(90,0,0,0);
 	gfx.mesh(mesh);
-	// float x = 50;
-	// float y = 50;
-	// float rowCount = 0;
-	// float columnCount = 0;
-	// float ellipseSize = 3;
-	// println(provinces);
-	
-	// for(Province prov : provinces){
-	// 	if(prov.returnNom() != null && prov.returnNom().contains("Quebec")){
-	// 		println("found Quebec");
-	// 		buildGraph(prov, 0, 0);
-	// 		background(0);
-	// 	}
-	// }
-
-	// image(thisImage, 400, 60);
-	// render3D(thisImage);
-	// for (Province prov : provinces) {
-	// 	buildGraph(prov, x, y); 
-	// 	// println(prov.nom+"	x:"+x+"	y:"+y);
-	// 	if (rowCount%7==0 && rowCount!=0) {
-	// 	  y+=500;
-	// 	  x=50;
-	// 	}
-	// 	x+=430;
-	// 	columnCount++;
-	// 	rowCount++;
-	// }//end run through provinces
+	// popMatrix();
 }//end draw
-
-////////////////////////////////////////////////////////////////////////////////////////////////////// DRAW IT 3D! ////////
-// int totalWidth = 250;
-// int totalHeight = 40;
-// int baseHeight = 10;
-// float elevationScale = (float)(totalHeight-baseHeight)/255;
-// void render3D(PImage img){
-// 	Terrain terrain = new Terrain(420, 420, 20);
-// 	float[] el = new float[420*420];
-// 	for (int i=0; i<img.pixels.length; i++) {
-// 		// we use the brightness of each pixel
-// 		// as a metric for elevation
-// 		// (however damped down to avoid crazy spikes)
-// 		el[i] = brightness(img.pixels[i])*elevationScale;
-// 	}
-// 	terrain.setElevation(el);
-// 	mesh = new WETriangleMesh();
-// 	terrain.toMesh(mesh,-10);
-// 	new LaplacianSmooth().filter(mesh,1);
-// 	String fileName="rendered.stl";
-// 	// save mesh in STL format in sketch folder
-// 	mesh.saveAsSTL(sketchPath(fileName));
-// 	gfx = new ToxiclibsSupport(this);
-// }
-
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////// DRAW IT! ////////
